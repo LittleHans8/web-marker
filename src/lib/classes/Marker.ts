@@ -18,6 +18,7 @@ interface MarkerConstructorArgs {
   rootElement?: HTMLElement;
   eventHandler?: EventHandler;
   highlightPainter?: HighlightPainter;
+  mobileAndTablet: boolean;
 }
 
 const defaultHighlightPainter: HighlightPainter = {
@@ -52,14 +53,19 @@ class Marker {
     uidToSerializedRange: {} as { [key: string]: SerializedRange },
   };
 
+  mobileAndTablet: boolean;
+
+
   constructor({
     rootElement,
     highlightPainter,
     eventHandler,
+    mobileAndTablet,
   }: MarkerConstructorArgs) {
     this.rootElement = rootElement || document.body;
     this.highlightPainter = highlightPainter || defaultHighlightPainter;
     this.eventHandler = eventHandler || defaultEventHandler;
+    this.mobileAndTablet = mobileAndTablet;
   }
 
   public static clearSelection() {
@@ -424,18 +430,22 @@ class Marker {
   };
 
   public addEventListeners() {
-    this.rootElement.addEventListener("click", this.clickListener, true);
+    let eventTypeClick = this.mobileAndTablet?"touchstart":"click";
+    let eventTypeOVer = this.mobileAndTablet?"touchstart":"mouseover";
+    this.rootElement.addEventListener(eventTypeClick, this.clickListener, true);
     this.rootElement.addEventListener(
-      "mouseover",
+        eventTypeOVer,
       this.mouseoverListener,
       true
     );
   }
 
   public removeEventListeners() {
-    this.rootElement.removeEventListener("click", this.clickListener, true);
+    let eventTypeClick = this.mobileAndTablet?"touchstart":"click";
+    let eventTypeOVer = this.mobileAndTablet?"touchstart":"mouseover";
+    this.rootElement.removeEventListener(eventTypeClick, this.clickListener, true);
     this.rootElement.removeEventListener(
-      "mouseover",
+        eventTypeOVer,
       this.mouseoverListener,
       true
     );
